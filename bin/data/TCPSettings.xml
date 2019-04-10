@@ -1,0 +1,12 @@
+<SERVER>
+	<IP>169.254.206.71</IP>
+	<!-- <IP>127.0.0.1</IP> -->
+	<PORT>11999</PORT>
+	<DELIM>;&#xA;</DELIM>
+</SERVER>
+<SERVER2>
+	<IP_BIS>169.254.206.71</IP_BIS>
+	<!-- <IP>127.0.0.1</IP> -->
+	<PORT_BIS>11999</PORT_BIS>
+	<!-- <DELIM>;&#xA;</DELIM> -->
+</SERVER2>
