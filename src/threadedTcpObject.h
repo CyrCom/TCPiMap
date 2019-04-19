@@ -6,7 +6,9 @@
 class TcpConnecter: public ofThread{
 public:
     void close(){
+        float before = ofGetElapsedTimef();
         waitForThread();
+        ofLog() << "Thread closed in: " + ofToString(ofGetElapsedTimef() - before, 2);
         tcpClientObject.close();
     }
 

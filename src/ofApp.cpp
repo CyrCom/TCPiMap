@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofHideCursor();
     ofSetBackgroundColor(0,0,0);
 
     setupTCP();
@@ -125,28 +126,13 @@ void ofApp::draw(){
 
             pOmxPlayers[i]->draw(vProps[i].x, vProps[i].y, vProps[i].width, vProps[i].height);
 
-            if (bShowTestScreen){
-                // drawing blank test screen
-                ofPushStyle();
-                (bInvertColors) ? ofSetColor(colors.testScreenInverted, colors.testScreenAlpha) : ofSetColor(colors.testScreen, colors.testScreenAlpha);
-                ofDrawRectangle(pWarpers[i]->getBaseRectangle());
+            drawTestScreen(i);
 
-                // drawing surface number at the center of the warper.
-                ofPushMatrix();
-                unsigned int surf_nb = i + static_cast<unsigned int>(1);
-                ofTranslate(vProps[i].getTranslationVector(surf_nb));
-                ofScale(vProps[i].getFontFactor(surf_nb));
-                (bInvertColors) ? ofSetColor(colors.numberInverted) : ofSetColor(colors.number);
-                surf_nb_font.drawStringAsShapes(ofToString(surf_nb), 0, 0);
-                ofPopMatrix();
-
-                ofPopStyle();
-            }
             pWarpers[i]->end();
         }
     }
 
-    if(bDrawDebugText){
+    if(bShowDebugText){
         drawTCP();
     }
 }
@@ -177,6 +163,26 @@ void ofApp::drawTCP(){
     ofDrawBitmapString("tcpConnecter.tcpClientObject.isConnected(): " + ofToString(tcpConnecter.tcpClientObject.isConnected()) + " || tcpConnecter.isThreadRunning(): " + ofToString(tcpConnecter.isThreadRunning())
                        , 15, ofGetHeight()-15);
     ofPopStyle();
+}
+
+void ofApp::drawTestScreen(const unsigned int &i){
+    if (bShowTestScreen){
+        // drawing blank test screen
+        ofPushStyle();
+        (bInvertColors) ? ofSetColor(colors.testScreenInverted, colors.testScreenAlpha) : ofSetColor(colors.testScreen, colors.testScreenAlpha);
+        ofDrawRectangle(pWarpers[i]->getBaseRectangle());
+
+        // drawing surface number at the center of the warper.
+        ofPushMatrix();
+        unsigned int surf_nb = i + static_cast<unsigned int>(1);
+        ofTranslate(vProps[i].getTranslationVector(surf_nb));
+        ofScale(vProps[i].getFontFactor(surf_nb));
+        (bInvertColors) ? ofSetColor(colors.numberInverted) : ofSetColor(colors.number);
+        surf_nb_font.drawStringAsShapes(ofToString(surf_nb), 0, 0);
+        ofPopMatrix();
+
+        ofPopStyle();
+    }
 }
 
 void ofApp::keyPressed(int key){
@@ -245,7 +251,7 @@ void ofApp::addSurface(const bool &enableTexture){
         pWarpers.emplace_back(new ofxGLWarper);
         pWarpers[nbSurfaces]->setup(defWarperX, defWarperY, defWarperWidth, defWarperHeight); //initializes ofxGLWarper
         pWarpers[nbSurfaces]->setCornerSensibility(0.1f);
-        if (bGlobalForceDrawing) {pWarpers[nbSurfaces]->drawSettings.bForceDrawing = true;}
+        if (bGlobalForceDrawingWarpers) {pWarpers[nbSurfaces]->drawSettings.bForceDrawing = true;}
     }else{
         pWarpers.emplace_back(nullptr);
     }
@@ -261,12 +267,15 @@ void ofApp::addSurface(const bool &enableTexture){
     //pOmxSettings[nbSurfaces]->doFlipTexture =     false;  //default false
     //pOmxSettings[nbSurfaces]->initialVolume =     0.5;    //default 0.5
 
-    if (pWarpers[selectedSurface]){
+    if (pWarpers[selectedSurface]){ // old selected surface
+
+        if(pWarpers[selectedSurface]->getCornerIsSelected()) pWarpers[selectedSurface]->deselectCorner(); // warper colors: not selected
         pWarpers[selectedSurface]->drawSettings.cornersColor = colors.basic_corn; // warper colors: not selected
         pWarpers[selectedSurface]->drawSettings.rectangleColor = colors.basic_rect; // warper colors: not selected
     }
     selectedSurface=nbSurfaces++;
-    if (pWarpers[selectedSurface]){
+    if (pWarpers[selectedSurface]){ // new selected surface
+        pWarpers[selectedSurface]->drawSettings.selectedCornerColor = colors.selsurf_selcorn; // warper colors: selected
         pWarpers[selectedSurface]->drawSettings.cornersColor = colors.selsurf_corn; // warper colors: selected
         pWarpers[selectedSurface]->drawSettings.rectangleColor = colors.selsurf_rect; // warper colors: selected
     }
@@ -329,7 +338,7 @@ void ofApp::deleteSurface(){
         selectedSurface = selectedSurface - 1;
     }
 
-    if (pWarpers[selectedSurface]){
+    if (pWarpers[selectedSurface]){ // new selected surface
         pWarpers[selectedSurface]->drawSettings.cornersColor = colors.selsurf_corn; // warper colors: selected
         pWarpers[selectedSurface]->drawSettings.rectangleColor = colors.selsurf_rect; // warper colors: selected
     }

@@ -18,6 +18,7 @@ class ofApp : public ofBaseApp{
         void exit();
         void keyPressed(int key);
 
+        void drawTestScreen(const unsigned int &surf_nb);
         void addSurface(const bool &enableTexture);
         void centerAlign();
         void reSetupWarp();
@@ -31,7 +32,7 @@ class ofApp : public ofBaseApp{
 
 // DRAWING -----------------------------------------------------------------------
         struct colors{
-            //ofColor selsurf_selcorn = ofColor(255, 0, 0);
+            ofColor selsurf_selcorn = ofColor(31, 255, 255);
             ofColor selsurf_corn = ofColor(255, 31, 31);
             ofColor selsurf_rect = ofColor(255, 31, 31);
             //ofColor basic_selcorn = ofColor(255, 0, 0);
@@ -46,10 +47,10 @@ class ofApp : public ofBaseApp{
         };
         colors colors;
 
-        bool bGlobalForceDrawing = false; // forces warpers to be drawn
+        bool bGlobalForceDrawingWarpers = false; // forces warpers to be drawn
         bool bShowTestScreen = false; // draws blank screen on top of warpers with surface number
         bool bInvertColors = false; // projects white everywhere but on the screens
-        bool bDrawDebugText = false; // draws some maybe usefull infos
+        bool bShowDebugText = false; // draws some maybe usefull infos
 
         int SNF_str_size; // draw debug
         std::string SNF_1, SNF_2; // draw debug
